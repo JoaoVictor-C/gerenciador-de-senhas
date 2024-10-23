@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { ThemedText } from '@/components/ThemedText';
+import { Colors } from '@/constants/Colors';
 
 export function HelloWave() {
   const rotationAnimation = useSharedValue(0);
@@ -22,7 +23,7 @@ export function HelloWave() {
   }));
 
   return (
-    <Animated.View style={animatedStyle}>
+    <Animated.View style={[animatedStyle]}>
       <ThemedText style={styles.text}>👋</ThemedText>
     </Animated.View>
   );
@@ -33,5 +34,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 32,
     marginTop: -6,
+    color: Colors.light.text,
   },
 });

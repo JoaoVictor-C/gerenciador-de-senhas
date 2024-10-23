@@ -1,37 +1,56 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { ThemedView } from '@/components/ThemedView';
+import { StyleSheet } from 'react-native';
+import { SQLiteDatabase, SQLiteProvider } from 'expo-sqlite';
+import { initializeDatabase } from '@/hooks/useSQLite';
+import { AuthProvider, AuthContext } from '@/contexts/AuthContext';
+import React, { useContext } from 'react';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
+  await initializeDatabase(db);
+};
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const AuthStack = () => (
+  <Stack>
+    <Stack.Screen name="login" options={{ headerShown: false }} />
+    <Stack.Screen name="register" options={{ title: 'Registrar' }} />
+    <Stack.Screen name="+not-found" options={{ title: 'Oops!' }} />
+  </Stack>
+);
+
+const AppStack = () => (
+  <Stack>
+    <Stack.Screen name="home" options={{ title: 'Home' }} />
+    <Stack.Screen name="passwords" options={{ title: 'Minhas Senhas' }} />
+    <Stack.Screen name="createPassword" options={{ title: 'Criar Senha' }} />
+    <Stack.Screen name="backup" options={{ title: 'Backup' }} />
+    <Stack.Screen name="restore" options={{ title: 'Restaurar' }} />
+    <Stack.Screen name="categories" options={{ title: 'Categorias' }} />
+    <Stack.Screen name="generatePassword" options={{ title: 'Gerar Senha Forte' }} />
+    <Stack.Screen name="+not-found" options={{ title: 'Oops!' }} />
+  </Stack>
+);
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <SQLiteProvider databaseName="gerenciador_senhas.db" onInit={migrateDbIfNeeded}>
+      <AuthProvider>
+        <ThemedView style={styles.container}>
+          <AuthNavigator />
+        </ThemedView>
+      </AuthProvider>
+    </SQLiteProvider>
   );
 }
+
+const AuthNavigator = () => {
+  const { user } = useContext(AuthContext);
+
+  return user ? <AppStack /> : <AuthStack />;
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
