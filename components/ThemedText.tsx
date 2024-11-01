@@ -5,7 +5,7 @@ import { Colors } from '@/constants/Colors';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'button';
 };
 
 export function ThemedText({
@@ -30,6 +30,9 @@ export function ThemedText({
       break;
     case 'link':
       textStyle = styles.link;
+      break;
+    case 'button':
+      textStyle = styles.button;
       break;
     default:
       textStyle = styles.default;
@@ -74,5 +77,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.light.link,
     textDecorationLine: 'underline',
+  },
+  button: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.light.background,
   },
 });

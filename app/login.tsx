@@ -1,16 +1,19 @@
 import React, { useState, useContext } from 'react';
-import { TextInput, Button, StyleSheet, Alert, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput, StyleSheet, Alert, TouchableOpacity, KeyboardAvoidingView, Platform, View, Image } from 'react-native';
 import { AuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
+import { useColorScheme } from 'react-native';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const { login } = useContext(AuthContext);
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
 
   const handleLogin = async () => {
     if (!email || !senha) {
@@ -34,33 +37,48 @@ export default function Login() {
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <ThemedView style={styles.content}>
-        <ThemedText type="title" style={styles.title}>Login</ThemedText>
+      <ThemedView style={[styles.content]}>
+        <ThemedText type="title" style={[styles.title, { color: colors.text }]}>Login</ThemedText>
         <ThemedView style={styles.inputContainer}>
           <TextInput
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
-            style={styles.input}
+            style={[styles.input, { 
+              backgroundColor: colors.inputBackground, 
+              color: colors.text,
+              borderColor: colors.border
+            }]}
             keyboardType="email-address"
             autoCapitalize="none"
-            placeholderTextColor={Colors.light.text}
+            placeholderTextColor={colors.text}
           />
           <TextInput
             placeholder="Senha"
             value={senha}
             onChangeText={setSenha}
-            style={styles.input}
+            style={[styles.input, { 
+              backgroundColor: colors.inputBackground, 
+              color: colors.text,
+              borderColor: colors.border
+            }]}
             secureTextEntry
-            placeholderTextColor={Colors.light.text}
+            placeholderTextColor={colors.text}
           />
         </ThemedView>
         <ThemedView style={styles.buttonContainer}>
-          <Button title="Login" onPress={handleLogin} color={Colors.light.tint} />
+          <TouchableOpacity 
+            style={[styles.loginButton, { backgroundColor: colors.tint }]} 
+            onPress={handleLogin}
+          >
+            <ThemedText type="button" style={{ color: colors.buttonText }}>Login</ThemedText>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
-            <ThemedText type="link">Ainda não tem uma conta? Registre-se</ThemedText>
+            <ThemedText type="link" style={{ color: colors.link }}>
+              Ainda não tem uma conta? Registre-se
+            </ThemedText>
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>
@@ -71,40 +89,54 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
-    padding: 16,
+    padding: 24,
     justifyContent: 'center',
   },
   content: {
-    flex: 1,
-    padding: 16,
+    width: '100%',
+    padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
+    resizeMode: 'contain',
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 28,
+    marginBottom: 24,
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   input: {
     height: 50,
-    borderColor: Colors.light.border,
     borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: Colors.light.card,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    borderRadius: 10,
     fontSize: 16,
-    color: Colors.light.text,
   },
   buttonContainer: {
     width: '100%',
     alignItems: 'center',
   },
+  loginButton: {
+    width: '100%',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   registerButton: {
-    marginTop: 15,
+    marginTop: 10,
   },
 });

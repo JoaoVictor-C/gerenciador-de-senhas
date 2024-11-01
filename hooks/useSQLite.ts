@@ -22,14 +22,14 @@ export const initializeDatabase = async (db: SQLiteDatabase) => {
     CREATE TABLE IF NOT EXISTS senhas (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT NOT NULL,
-      usuario TEXT NOT NULL,
+      usuario_id INTEGER,
       senha TEXT NOT NULL,
       url TEXT,
       categoria_id INTEGER,
-      nota TEXT,
       criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
       atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+      FOREIGN KEY (categoria_id) REFERENCES categorias(id),
+      FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
     );
   `);
 
