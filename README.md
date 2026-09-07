@@ -1,50 +1,57 @@
-# Welcome to your Expo app 👋
+# Gerenciador de Senhas
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An offline password manager for Android and iOS. Vaults are stored locally in SQLite, unlocked with the device's own biometrics, and never leave the phone — there is no server, no account and no sync.
 
-## Get started
+Built with React Native and Expo Router.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+| | |
+|---|---|
+| **Biometric unlock** | Fingerprint or face, via `expo-local-authentication` ([`hooks/useBiometricAuth.ts`](hooks/useBiometricAuth.ts)) |
+| **Local vault** | Every credential in an on-device SQLite database ([`hooks/useSQLite.ts`](hooks/useSQLite.ts)) |
+| **Password generator** | Configurable length and character classes ([`components/PasswordGenerator.tsx`](components/PasswordGenerator.tsx)) |
+| **Categories** | Group credentials by category |
+| **Backup and restore** | Export the vault to a file and import it back — `backup.tsx` / `restore.tsx` |
+| **Clipboard** | Copy a password without revealing it on screen |
+| **Themed UI** | Light and dark, following the system setting |
 
-   ```bash
-    npx expo start
-   ```
+## Why offline
 
-In the output, you'll find options to open the app in a
+A password manager's threat model is dominated by the store, not the client. Keeping the vault on the device removes the server as a target entirely: there is no breach to be in, and no operator who could be compelled. The trade is real and deliberate — no multi-device sync, and losing the phone without a backup loses the vault, which is exactly why `backup.tsx` exists.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Screens
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+app/
+├─ login.tsx            biometric / master unlock
+├─ register.tsx         first-run setup
+├─ home.tsx             dashboard
+├─ passwords.tsx        vault list
+├─ createPassword.tsx   add or edit an entry
+├─ generatePassword.tsx generator
+├─ categories.tsx       category management
+├─ backup.tsx           export
+└─ restore.tsx          import
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Routing is file-based through Expo Router; `contexts/AuthContext.tsx` holds the lock state and gates the routes behind it.
 
-## Learn more
+## Stack
 
-To learn more about developing your project with Expo, look at the following resources:
+React Native · Expo · TypeScript · Expo Router · `expo-sqlite` · `expo-local-authentication` · `expo-crypto` · `expo-clipboard` · `expo-document-picker` · React Navigation
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Running it
 
-## Join the community
+```bash
+npm install
+npx expo start
+```
 
-Join our community of developers creating universal apps.
+Then open it in Expo Go, an Android emulator, or an iOS simulator. Biometric unlock needs a physical device or an emulator with enrolled biometrics.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Status
+
+Personal project, 2024. A learning exercise in local-first mobile storage and platform biometric APIs — **not audited, and not intended to hold real credentials.**
